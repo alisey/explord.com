@@ -1,0 +1,97 @@
+<!doctype html>
+<head>
+    <meta charset="utf-8">
+    <title>Moire Patterns</title>
+    <style>
+        html {
+            margin: 0;
+            padding: 0;
+        }
+
+        body {
+            margin: 0;
+            padding: 20px;
+            background: #000;
+        }
+        
+        img {
+            margin: 60px;
+        }
+    </style>
+</head>
+<body>
+    <script>
+        var patterns = [
+            function(x, y) { return hsla(y / 255, 1, sin((x + pow(y, 1.2)) * PI / 64) * sin((y - pow(x, 1.2)) * PI / 64), 1) },
+            function(x, y) { return hsla(0, 0, sin((pow(x - 64, 2) + pow(y - 64, 2)) / 100.0), 1) },
+            function(x, y) { return hsla(0, 0, sin((pow(x/2 - 64, 2) + pow(y/2 - 64, 2)) / 100.0), 1) },
+            function(x, y) { return hsla(0.1, sin(x/20) * sin(y/20)*6, 0.5+cos(x/30) * cos(y/30), 1) },
+            function(x, y) { return hsla(0, sin(x/30), sin((pow(x, 1.2) + pow(y, 1.2)) / 100.0), 1) },
+            function(x, y) { return hsla(sin(pow(x * y, 0.9) * PI / 65536), 0.9, sin(pow(x * y, 0.9) * PI / 1024), 1) },
+            function(x, y) { return hsla(0, sin(x*y*3), 0.6*sin(x/190)*sin(y/190), 1) },
+            function(x, y) { return [0, sin(x/10) * sin(y/10), sin(x/10 + PI) * sin(y/20), 1] },
+            function(x, y) { return int2rgba(1000 * (sin(x / 80) + sin(y / 80)) | (255 << 24)); }
+        ];
+        
+        var sin = Math.sin;
+        var cos = Math.cos;
+        var pow = Math.pow;
+        var PI  = Math.PI;
+        
+        // http://www.w3.org/TR/2003/CR-css3-color-20030514/#hsl-color
+        var hsla = function(h, s, l, a) {
+            function hue_to_rgb(m1, m2, h) {
+                if (h < 0) h += 1;
+                if (h > 1) h -= 1;
+                if (h < 1/6) return m1 + (m2 - m1) * 6 * h;
+                if (h < 1/2) return m2;
+                if (h < 2/3) return m1 + (m2 - m1) * 6 * (2/3 - h);
+                return m1;
+            }
+
+            var m2 = l < 0.5 ? l * (s + 1) : l + s - l * s;
+            var m1 = 2 * l - m2;
+            return [hue_to_rgb(m1, m2, h + 1/3),
+                    hue_to_rgb(m1, m2, h),
+                    hue_to_rgb(m1, m2, h - 1/3),
+                    a];
+        };
+        
+        var int2rgba = function(n) {
+            return [(n & 255)       / 256,
+                    (n >>  8 & 255) / 256,
+                    (n >> 16 & 255) / 256,
+                    (n >> 24 & 255) / 256];
+        };
+        
+        HTMLCanvasElement.prototype.fillPixels = function(fn) {
+            var width  = this.width,
+                height = this.height,
+                ctx    = this.getContext('2d'),
+                pixels = ctx.createImageData(width, height),
+                i      = 0;
+            
+            for (var y = 0; y < height; y++) {
+                for (var x = 0; x < width; x++) {
+                    var color = fn(x, y);
+                    pixels.data[i++] = Math.floor(color[0] * 256);
+                    pixels.data[i++] = Math.floor(color[1] * 256);
+                    pixels.data[i++] = Math.floor(color[2] * 256);
+                    pixels.data[i++] = Math.floor(color[3] * 256);
+                }
+            }
+            ctx.putImageData(pixels, 0, 0);
+        };
+        
+        for (var i = 0; i < patterns.length; i++) {
+            var canvas = document.createElement('canvas');
+            canvas.width  = 600;
+            canvas.height = 600;
+            canvas.fillPixels(patterns[i]);
+            var url = canvas.toDataURL("image/png");
+            var img = document.createElement('img');
+            img.src = url;
+            document.body.appendChild(img);
+        };
+    </script>
+</body>

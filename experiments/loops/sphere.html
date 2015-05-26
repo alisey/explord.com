@@ -1,0 +1,98 @@
+<!doctype html>
+<head>
+    <meta charset="utf-8">
+    <title>Wobbling Sphere</title>
+    <style>
+        body {
+            margin: 0;
+            padding: 30px;
+        }
+        
+        textarea {
+            box-sizing: border-box;
+            font: 12px/1.5 Consolas;
+            border: 1px solid #ddd;
+            box-shadow: inset 1px 1px 3px #eee;
+        }
+        
+        canvas {
+            display: block;
+        }
+    </style>
+</head>
+
+<canvas id="paper" width="300" height="300" style="background: #f0f0e8"></canvas>
+<div style="padding-top: 10px; width: 300px; text-align: right">
+    <textarea style="width: 300px; height: 200px;" id="code">animate(function(t) {
+  loop(0, pi, 800, function(i) {
+    var a = 100*i + sin(t/24+i),
+        z = sin(i) * cos(a) + 4,
+        x = sin(i) * sin(a),
+        y = cos(i) * (1+0.1*sin(t/12))
+            + 0.3*cos(t/24);
+    circle(4*x/z, 4*y/z, 0.04 - z/125);
+  });
+});</textarea><br>
+    <input type="submit" id="draw" value="Draw" style="margin: 4px 0">
+</div>
+<script>
+
+    sin = Math.sin;
+    cos = Math.cos;
+    abs = Math.abs;
+    asin = Math.asin;
+    acos = Math.acos;
+    pow = Math.pow;
+    sqrt = Math.sqrt;
+    pi   = Math.PI;
+    sqr  = function(x) { return x * x; }
+    random = function(min, max) {
+        return min + (max - min) * Math.random();
+    };
+    
+    function circle(x, y, r, color) {
+        ctx.save();
+        ctx.fillStyle = color;
+        ctx.beginPath();
+        ctx.arc(x, y, r, 0, Math.PI * 2);
+        ctx.fill();
+        ctx.restore();
+    }
+    
+    function hsl(h, s, l) {
+        return 'hsl(' + [
+            Math.floor(360 * h),
+            Math.floor(100 * s) + '%',
+            Math.floor(100 * l) + '%',
+        ].join(',') + ')';
+    }
+    
+    function animate(fn) {
+        clearInterval(animate.interval);
+        var t = 0;
+        animate.interval = setInterval(function() {
+            ctx.clearRect(-1.5, -1.5, 3, 3);
+            fn(t++);
+        }, 16);
+    }
+
+    function loop(min, max, steps, fn) {
+        for (var i = 0; i < steps; i++) {
+            fn(min + (max - min) * i / (steps-1));
+        }
+    }
+    
+    function run() {
+        ctx.clearRect(-1.5, -1.5, 3, 3);
+        eval(document.getElementById('code').value);
+    };
+    
+    var paper = document.getElementById('paper');
+    var ctx   = paper.getContext('2d');
+    ctx.translate(Math.floor(paper.width / 2) + 0.5, Math.floor(paper.height / 2) + 0.5);
+    ctx.scale(paper.width/3, -paper.width/3);
+    
+    document.getElementById('draw').onclick = run;
+    run();
+    
+</script>

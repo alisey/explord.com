@@ -1,0 +1,20 @@
+.car-grid {
+    position: relative;
+    background: white;
+    border-radius: 5px;
+    background: url(../images/blank.png);
+}
+
+.car-grid .exit {
+    position: absolute;
+    width: 40px;
+    height: 40px;
+}
+
+.car-grid .wall {
+    position: absolute;
+    width: 40px;
+    height: 40px;
+    margin: 1px 1px;
+    background: url(../images/stone.png) no-repeat;
+}

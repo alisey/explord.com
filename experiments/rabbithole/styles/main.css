@@ -1,0 +1,141 @@
+html {
+    margin: 0;
+    padding: 0;
+    height: 100%;
+    background: #D4DfD1;
+}
+
+body {
+    margin: 0;
+    padding: 0;
+    min-height: 100%;
+    position: relative;
+    user-select: none;
+    -webkit-user-select:none;
+}
+
+header {
+    height: 85px;
+    background-image: url(../images/header-background.png);
+    background-repeat: repeat-x;
+    background-size: 100% 100%;
+}
+
+.thumbs {
+    padding: 150px 0 250px 0;
+    text-align: center;
+}
+
+.thumb {
+    margin: 30px;
+    vertical-align: top;
+    border-radius: 5px;
+}
+
+footer {
+    position: absolute;
+    bottom: 0;
+    width: 100%;
+    height: 40px;
+    background: #506256;
+    font: 12px/40px sans-serif;
+    text-align: center;
+    overflow: hidden;
+}
+
+footer a {
+    color: #a9b1a6;
+    margin: 0 10px;
+}
+
+/* === Z-indexes === */
+
+#exit {
+    z-index: 150;
+}
+
+.player {
+    z-index: 160;
+}
+
+#exitmask {
+    z-index: 170;
+}
+
+.speech-bubble {
+    z-index: 180;
+}
+
+#exit.growing {
+    z-index: 190;
+}
+
+body::before, body::after {
+    z-index: 195;
+}
+
+/* === Black letterbox lines at the top and bottom === */
+
+body::before, body::after {
+    content: "";
+    position: fixed;
+    background: #000;
+    left: 0;
+    right: 0;
+    height: 0;
+    transition-duration: 1s;
+    transition-properties: top, bottom, height;
+    transition-timing-function: cubic-bezier(.25, 1, .25, 1);
+}
+
+body::before {
+    top: 0;
+}
+
+body::after {
+    bottom: 0;
+}
+
+body.letterbox::before {
+    height: 40px;
+}
+
+body.letterbox::after {
+    height: 40px;
+}
+
+body.blackout::after {
+    height: 100%;
+}
+
+/* === Exit === */
+
+#exitmask, #exit {
+    position: absolute;
+    overflow: hidden;
+    width: 250px;
+    height: 250px;
+    right: 0;
+    bottom: 0;
+    pointer-events: none;
+}
+
+#exit svg {
+    position: absolute;
+    right: 0;
+    bottom: 0;
+}
+
+#exitmask svg {
+    position: absolute;
+    right: -60px;
+    bottom: 40px;
+}
+
+#exitmask {
+    display: none;
+}
+
+#exit.growing {
+    overflow: visible;
+}

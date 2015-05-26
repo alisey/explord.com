@@ -1,0 +1,65 @@
+<!doctype html>
+<head>
+    <meta charset="utf-8">
+    <title>Orbits</title>
+    <style>
+        html, body {
+            margin: 0;
+            padding: 0;
+            background: #000;
+        }
+        
+        body {
+            padding: 20px;
+        }
+        
+        img {
+            display: block;
+            float: left;
+            margin: 20px 0 0 20px;
+        }
+    </style>
+    <script src="orbits.js"></script>
+    <script src="functions.js"></script>
+</head>
+<body>
+<script>
+    orbits = niceOrbits;
+    
+    for (var i = 0; i < orbits.length; i++) {
+        drawScaledOrbit(Orbit(orbits[i], 5000), 300);
+    }
+    d = document.createElement('div');
+    d.style.clear = 'both';
+    document.body.appendChild(d);
+    
+    function drawScaledOrbit(orb, scaleTo) {
+        var paper = document.createElement('canvas');
+        var ctx = paper.getContext('2d');
+        
+        var bbox = orb.bbox();
+        var biggerSide = Math.max(bbox.width, bbox.height);
+        var x0   = -bbox.xmin + (biggerSide - bbox.width) / 2;
+        var y0   = -bbox.ymin + (biggerSide - bbox.height) / 2;
+        
+        paper.width     = biggerSide;
+        paper.height    = biggerSide;
+        ctx.strokeStyle = '#ffe';
+        ctx.globalAlpha = 0.15;
+        
+        var iter = orb.iterator(), leg;
+        while (leg = iter.next()) {
+            ctx.beginPath();
+            ctx.moveTo(x0, y0);
+            for (var i = 0; i < leg.length; i++) {
+                ctx.lineTo(x0 + leg[i][0], y0 + leg[i][1]);
+            }
+            ctx.stroke();
+        }
+        
+        var img = new Image();
+        img.src = paper.toDataURL('image/png');
+        img.width = scaleTo;
+        document.body.appendChild(img);
+    }
+</script>

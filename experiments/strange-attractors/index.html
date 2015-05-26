@@ -1,0 +1,52 @@
+<!doctype html>
+<head>
+    <meta charset="utf-8">
+    <title>Strange Attractors</title>
+    <style>
+        html {
+            display: table;
+            width: 100%;
+            height: 100%;
+            margin: 0;
+            padding: 0;
+        }
+
+        body {
+            display: table-cell;
+            vertical-align: middle;
+            /*background: radial-gradient(circle, #eeeeee, #445B60);*/
+            background: url(images/background-2.png) no-repeat;
+            background-size: cover;
+        }
+
+        .attractors {
+            width: 1200px;
+            height: 800px;
+            margin: 20px auto;
+            display: -webkit-flex;
+            display: flex;
+            -webkit-justify-content: center;
+            justify-content: center;
+            -webkit-flex-wrap: wrap;
+            flex-wrap: wrap;
+        }
+    </style>
+    <script src="js/three.js"></script>
+    <script src="js/attractor.js"></script>
+    <script src="js/detector.js"></script>
+</head>
+<body>
+    <div class="attractors">
+        <strange-attractor type="halvorsen" width="400" height="400"></strange-attractor>
+        <strange-attractor type="aizawa" width="400" height="400" autorotate></strange-attractor>
+        <strange-attractor type="lorenz" width="400" height="400"></strange-attractor>
+        <strange-attractor type="noseHoover" width="400" height="400"></strange-attractor>
+        <strange-attractor type="thomas" width="400" height="400"></strange-attractor>
+    </div>
+    <script>
+        if (!Detector.webgl) {
+            document.body.innerHTML = '';
+            Detector.addGetWebGLMessage();
+        }
+    </script>
+</body>

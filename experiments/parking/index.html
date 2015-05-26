@@ -1,0 +1,74 @@
+<!doctype html>
+<head>
+    <meta charset="utf-8">
+    <title>Parking Lot Search</title>
+    <link rel="stylesheet" href="css/main.css">
+    <link rel="stylesheet" href="css/car.css">
+    <link rel="stylesheet" href="css/grid.css">
+</head>
+<body>
+    <div id="page">
+        <div id="puzzle-input"><textarea>| | | | | | | |
+| A A A B C . |
+| D E E B C . |
+| D . * * C . @
+| F F G . . H |
+| . I G J J H |
+| . I K K L L |
+| | | | | | | |</textarea>
+            <div id="solve-button-container">
+                <input id="solve-button" type="submit" value="Solve">
+            </div>
+        </div><div id="puzzle-animation"></div>
+    </div>
+    
+    <script src="scripts/jquery.js"></script>
+    <script src="scripts/car.js"></script>
+    <script src="scripts/grid.js"></script>
+    <script src="scripts/parking_puzzle.js"></script>
+    <script>
+        function solveAndPlay() {
+            var puzzle = $('#puzzle-input textarea').val();
+            window.location.hash = puzzle.replace(/ /g, '').replace(/\n/g, '_');
+            
+            try {
+                var grid = parseGrid(puzzle);
+                var view = new GridView(grid);
+            } catch (e) {
+                alert(e);
+                return;
+            }
+            
+            $('#solve-button').val('Solving...');
+            setTimeout(function() {
+                var actions = solveParkingPuzzle(grid);
+                if (actions.length) {
+                    playSolution(view, actions);
+                } else {
+                    alert("It's a trap!");
+                }
+                
+                $('#solve-button').val('Solve');
+                
+            }, 100);
+        }
+        
+        function playSolution(view, actions) {
+            $('#puzzle-animation').empty().append(view.node).animate({
+                width: view.node.width(),
+                'margin-left': 40
+            });
+            
+            setTimeout(function() {
+                view.animate(actions);
+            }, 600);
+        }
+        
+        $('#solve-button').click(solveAndPlay);
+        var puzzle = unescape(window.location.hash.substr(1)).split('').join(' ').replace(/_\s?/g, '\n');
+        if (puzzle) {
+            $('#puzzle-input textarea').val(puzzle);
+            solveAndPlay();
+        }
+    </script>
+</body>

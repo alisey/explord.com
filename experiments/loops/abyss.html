@@ -1,0 +1,157 @@
+<!doctype html>
+<head>
+    <meta charset="utf-8">
+    <title>Abyss</title>
+    <style>
+        body {
+            margin: 0;
+            padding: 30px;
+        }
+        
+        textarea {
+            box-sizing: border-box;
+            font: 12px/1.5 Consolas;
+            border: 1px solid #ddd;
+            box-shadow: inset 1px 1px 3px #eee;
+        }
+        
+        canvas {
+            display: block;
+        }
+        
+        #coords {
+            position: absolute;
+            margin-top: -300px;
+        }
+    </style>
+</head>
+
+<canvas id="paper" width="300" height="300" style="background: #f0f0e8"></canvas>
+<canvas id="coords" width="300" height="300"></canvas>
+<div style="padding-top: 10px; width: 300px; text-align: right">
+    <textarea style="width: 300px; height: 200px;" id="code">for (var i = 0; i < 1; i += 0.001) {
+  var rx = random(-0.2, 0.2);
+  var ry = random(-0.2, 0.2);
+  circle(
+    2.5 * i * sin(i*50*pi) + rx,
+    2.5 * i * cos(i*50*pi) + ry,
+    0.5  * sqrt(i),
+    hsl(0.7 - i/3.5, 0.5, 0.05+i*i*0.5)
+  );
+}</textarea><br>
+    <input type="submit" id="draw" value="Draw" style="margin: 4px 0">
+</div>
+<script>
+    sin = Math.sin;
+    cos = Math.cos;
+    abs = Math.abs;
+    asin = Math.asin;
+    acos = Math.acos;
+    pow = Math.pow;
+    sqrt = Math.sqrt;
+    pi   = Math.PI;
+    random = function(min, max) {
+        min = min || 0;
+        max = max || 1;
+        return min + (max - min) * Math.random();
+    };
+
+    function drawCoords() {
+        var paper = document.getElementById('coords');
+        var ctx   = paper.getContext('2d');
+        ctx.translate(Math.floor(paper.width / 2) + 0.5, Math.floor(paper.height / 2) + 0.5);
+        ctx.scale(paper.width/3, -paper.width/3);
+    
+        ctx.save();
+        ctx.lineWidth = 0.3/paper.width;
+        ctx.beginPath();
+        ctx.moveTo(0, -1.5);
+        ctx.lineTo(0, 1.5);
+        ctx.moveTo(-1.5, 0);
+        ctx.lineTo(1.5, 0);
+        
+        for (var x = 0; x < 30; x++) {
+            var xx = -1.5 + x / 10;
+            var width = (xx % 1 ? 0.06 : 0.2);
+            ctx.moveTo(xx, -width/2);
+            ctx.lineTo(xx, +width/2);
+        }
+        
+        for (var x = 0; x < 30; x++) {
+            var xx = -1.5 + x / 10;
+            var width = (xx % 1 ? 0.06 : 0.2);
+            ctx.moveTo(-width/2, xx);
+            ctx.lineTo(+width/2, xx);
+        }
+        
+        ctx.stroke();
+        ctx.restore();
+    }
+
+    var paper = document.getElementById('paper');
+    var ctx   = paper.getContext('2d');
+    ctx.translate(Math.floor(paper.width / 2) + 0.5, Math.floor(paper.height / 2) + 0.5);
+    ctx.scale(paper.width/3, -paper.width/3);
+    
+    drawCoords();
+    
+    document.getElementById('draw').onclick = function() {
+        drawCode(100);
+    };
+    
+    
+    var commandStack = [];
+    var nextCommandTimeout = null;
+    var drawInterval = 0;
+    function circle() {
+        commandStack.push([circle1, arguments]);
+    }
+    
+    function circle1(x, y, r, color) {
+        ctx.save();
+        ctx.fillStyle = color;
+        ctx.beginPath();
+        ctx.arc(x, y, r, 0, Math.PI * 2);
+        ctx.fill();
+        ctx.restore();
+    }
+    
+    function drawCode(interval) {
+        drawInterval = interval;
+        ctx.clearRect(-2, -2, 4, 4);
+        clearTimeout(nextCommandTimeout);
+        commandStack = [];
+        eval(document.getElementById('code').value);
+        n = 1;
+        // elapsed = Math.log(n);
+        elapsed = 1;
+        processCommands();
+    }
+    
+    function processCommands() {
+        if (!commandStack.length) {
+            return;
+        }
+        
+        var command = commandStack.shift();
+        command[0].apply(window, command[1]);
+        
+        elapsed+=0.016;
+        nextCommandTimeout = setTimeout(processCommands, 16);
+    }
+    
+    function halftone(n) {
+        n = Math.round(n * 255);
+        return 'rgb('+ [n, n, n].join(',') +')';
+    }
+    
+    function hsl(h, s, l) {
+        return 'hsl(' + [
+            Math.floor(360 * h),
+            Math.floor(100 * s) + '%',
+            Math.floor(100 * l) + '%',
+        ].join(',') + ')';
+    }
+    
+    drawCode();
+</script>

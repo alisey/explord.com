@@ -1,0 +1,90 @@
+<!doctype html>
+<head>
+    <meta charset="utf-8">
+    <title>Dragon Curve</title>
+    <style>
+        html, body {
+            width: 100%;
+            height: 100%;
+            margin: 0;
+            padding: 0;
+            border: 0;
+            overflow: hidden;
+            background: #000;
+        }
+        
+        #paper {
+            position: absolute;
+            left: 0;
+            top: 0;
+        }
+    </style>
+</head>
+
+<body>
+    <canvas id="paper" width="1600" height="1100"></canvas>
+
+    <script>
+        var paper     = document.getElementById("paper");
+            ctx       = paper.getContext('2d'),
+            x         = 1220,
+            y         = 710,
+            n         = 0,
+            dir       = 3,
+            segments  = 1 << 22,
+            batchSize = 10000,
+            camera    = new movingAveragePoint(20);
+        
+        setInterval(function() {
+            var speed = n ? (n == segments ? 0.02 : 0.05) : 1;
+            camera.add({x: x, y: y});
+            paper.style.left = paper.offsetLeft + speed * (window.innerWidth  / 2 - camera.x - paper.offsetLeft) + 'px';
+            paper.style.top  = paper.offsetTop  + speed * (window.innerHeight / 2 - camera.y - paper.offsetTop)  + 'px';
+            
+            for (var i = 0; n < segments && i < batchSize; i++, n++) {
+                ctx.fillStyle = hsvToRgb(n / segments, i / batchSize, 1);
+                ctx.fillRect(x, y, 1, 1);
+                
+                dir = ((dir + ((((n & -n) << 1) & n) ? -1 : 1)) + 4) % 4;
+                x += [0, 1, 0, -1][dir] * 0.5;
+                y += [1, 0, -1, 0][dir] * 0.5;
+            }
+        }, 20);
+        
+        function hsvToRgb(h, s, v) {
+            var r, g, b;
+            var i = Math.floor(h * 6);
+            var f = h * 6 - i;
+            var p = v * (1 - s);
+            var q = v * (1 - f * s);
+            var t = v * (1 - (1 - f) * s);
+
+            switch(i % 6) {
+                case 0: r = v, g = t, b = p; break;
+                case 1: r = q, g = v, b = p; break;
+                case 2: r = p, g = v, b = t; break;
+                case 3: r = p, g = q, b = v; break;
+                case 4: r = t, g = p, b = v; break;
+                case 5: r = v, g = p, b = q; break;
+            }
+
+            return 'rgb(' + [Math.floor(r * 256),
+                             Math.floor(g * 256),
+                             Math.floor(b * 256)].join(',') + ')';
+        }
+        
+        function movingAveragePoint(n) {
+            var points = [];
+            this.add = function(point) {
+                var xsum = 0, ysum = 0;
+                points = [point].concat(points.slice(0, n));
+                for (var i = 0; i < points.length; i++) {
+                    xsum += points[i].x;
+                    ysum += points[i].y;
+                }
+                this.x = xsum / points.length;
+                this.y = ysum / points.length;
+            };
+        }
+    </script>
+</body>

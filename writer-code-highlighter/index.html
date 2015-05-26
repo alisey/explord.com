@@ -1,0 +1,68 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Writer Code Highlighter</title>
+    <style>
+        body {
+            margin: 0;
+            padding: 40px;
+        }
+
+        body, input {
+            font: 16px/24px Arial;
+            color: #333;
+        }
+
+        a {
+            color: #09C;
+        }
+
+        textarea {
+            font: 12px/18px Consolas, Monaco, 'Andale Mono', monospace;
+            width: 580px;
+            height: 280px;
+            margin-top: 3px;
+        }
+    </style>
+</head>
+<body>
+
+    Paste your JS code:<br>
+    <textarea id="input"></textarea><br>
+    <label><input type="radio" name="block" value="1" checked>Block</label>
+    <label><input type="radio" name="block" value="0">Inline</label>
+    <input id="go" type="submit" value="Highlight"><br><br>
+
+    Highlighed writer-safe HTML. Writer must be in HTML mode. Use with a <a href="skin.txt">special skin</a>.<br>
+    <textarea id="output" onclick="this.select()"></textarea><br>
+
+
+    <script src="prism.js"></script>
+    <script>
+        function highlightText(text, isBlock) {
+            text = text.replace(/&/g, '&amp;')
+                       .replace(/</g, '&lt;')
+                       .replace(/>/g, '&gt;');
+
+            text = Prism.highlight(text, Prism.languages['javascript']);
+            text = text.replace(/(&lt;|http:)/g, '$1<span></span>')
+                       .replace(/\n/g, '<br>');
+                       // .replace(/  /g, ' &nbsp;')
+            text = isBlock ? '<div class="code">' + text + '</div>'
+                           : '<code>' + text + '</code>';
+            return text;
+        }
+
+        function highlightInputText() {
+            var text = document.getElementById('input').value;
+            var isBlock = document.getElementsByName('block')[0].checked;
+            document.getElementById('output').value = highlightText(text, isBlock);
+        }
+
+        document.getElementById('go').onclick = highlightInputText;
+        document.getElementById('input').onpaste = function() {
+            setTimeout(highlightInputText, 0);
+        };
+    </script>
+</body>
+</html>

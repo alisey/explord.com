@@ -1,0 +1,247 @@
+<!doctype html>
+<head>
+    <meta charset="utf-8">
+    <title>Linear Regression by Gradient Descent</title>
+    <style>
+        html {
+            padding: 0;
+            margin:  0;
+            min-height: 100%;
+        }
+
+        body {
+            width: 1000px;
+            margin: 0 auto;
+            padding: 20px 0 40px 40px;
+            background: #DEE3E5 url(background.png);
+            font: 16px/1.5 "Trebuchet MS", Arial, sans-serif;
+            color: #333;
+            min-height: 100%;
+        }
+
+        canvas {
+            background: #FFF;
+            border-radius: 5px;
+            display: block;
+        }
+
+        h1 {
+            font-size: 49px;
+            margin: 0;
+            padding: 20px 0 40px 0;
+        }
+
+        .plate {
+            width: 302px;
+            display: inline-block;
+            margin-right: 20px;
+            vertical-align: top;
+        }
+
+        .plate-description {
+            padding: 7px 0 0 4px;
+        }
+
+        #input-overlay, #normal-overlay {
+            position: absolute;
+            background: transparent;
+        }
+
+        #click-here-arrow {
+            position: absolute;
+            width: 41px;
+            height: 63px;
+            margin: -48px 0 0 -25px;
+            background: url(click-here-arrow.png) no-repeat;
+            display: none;
+            pointer-events: none;
+        }
+
+        #clear-button {
+            color: #00A3B5;
+            cursor: pointer;
+            border-bottom: 1px dashed #00A3B5;
+        }
+    </style>
+    <script src="jquery.js"></script>
+    <script src="util.js"></script>
+    <script src="regression.js"></script>
+</head>
+
+<body>
+    <h1>Linear Regression by Gradient Descent</h1>
+    <div class="plate">
+        <canvas id="input-overlay"  width="300" height="300"></canvas>
+        <canvas id="input-plate"    width="300" height="300"></canvas>
+        <div class="plate-description">
+            <span id="click-here-arrow"></span>
+            Click to add data points and see their linear regression. Or <span id="clear-button">clear</span>.
+        </div>
+    </div>
+    <div class="plate">
+        <canvas id="normal-overlay" width="300" height="300"></canvas>
+        <canvas id="normal-plate"   width="300" height="300"></canvas>
+        <div class="plate-description">
+        The same set of points with X and Y coordinates independently normalized to the range [-1..1]. The light lines are hypotheses tested by the gradient descent algorithm.
+        </div>
+    </div>
+    <div class="plate">
+        <canvas id="cost-plate" width="300" height="300"></canvas>
+        <div class="plate-description">
+        The least squares cost function of the normalized data. Each point corresponds to a linear equation. The brighter the point, the better it fits the data. Hover the mouse to see what equation each point corresponds to.
+        </div>
+    </div>
+
+    <script>
+        function drawEverything() {
+            var inputMap = pointMapper(
+                listBounds(listColumn(points, 0)), [-1, 1],
+                listBounds(listColumn(points, 1)), [-1, 1]);
+
+            var normalizedPoints = points.map(inputMap);
+
+            inputPlate.clear();
+            normalPlate.clear();
+            costPlate.clear();
+
+            drawPoints();
+            drawCostFunction();
+            drawGradientDescent();
+
+            function drawPoints() {
+                for (var i = 0; i < points.length; i++) {
+                    inputPlate.fillCircle(points[i], 3, pointColor);
+                    normalPlate.fillCircle(
+                        normalMap.back(normalizedPoints[i]), 3, pointColor);
+                }
+            }
+
+            function drawCostFunction() {
+                costPlate.fillPixels(function(x, y) {
+                    var cost = quadraticCost(
+                        normalizedPoints, linearFunction(costMap([x, y])));
+                    
+                    cost = Math.sqrt(cost) / 2;
+                    return hsla(cost * 0.8, 1, 1 - cost, 1);
+                });
+            }
+
+            function drawGradientDescent() {
+                var theta = [0, 0];
+                var alpha = 0.1;
+                var iterations = 50;
+
+                var thetaHistory = [];
+
+                for (var i = 0; i < iterations; i++) {
+                    thetaHistory.push(theta);
+                    theta = gradientDescentIteration(normalizedPoints, theta, alpha);
+                }
+
+                inputPlate.strokeLinearFunction(
+                    inputMap.wrapFunction(linearFunction(theta)),
+                    finalHypothesisColor
+                );
+
+                thetaHistory.push(theta);
+                clearTimeout(animationTimeout);
+                var animation = function() {
+                    var theta = thetaHistory.shift();
+
+                    normalPlate.strokeLinearFunction(
+                        normalMap.wrapFunction(linearFunction(theta)),
+                        intermediateHypothesisColor
+                    );
+
+                    costPlate.fillCircle(costMap.back(theta), 1, descentPathColor);
+
+                    if (thetaHistory.length) {
+                        animationTimeout = setTimeout(animation, 32);
+                    }
+                };
+                animation();
+            }
+        }
+
+
+        function drawFunctionFromCostPlate(point) {
+            if (!points.length) {
+                return;
+            }
+
+            var inputMap = pointMapper(
+                listBounds(listColumn(points, 0)), [-1, 1],
+                listBounds(listColumn(points, 1)), [-1, 1]);
+
+            var fn = linearFunction(costMap(point));
+            inputOverlay.clear();
+            normalOverlay.clear();
+            normalOverlay.strokeLinearFunction(
+                normalMap.wrapFunction(fn),
+                highlightedHypothesisColor);
+            inputOverlay.strokeLinearFunction(
+                inputMap.wrapFunction(fn),
+                highlightedHypothesisColor);
+        }
+
+
+        var pointColor = '#444444';
+        var intermediateHypothesisColor = 'rgba(0, 0, 0, 0.1)';
+        var finalHypothesisColor = '#00A3B5';
+        var highlightedHypothesisColor = 'hsla(0, 50%, 50%, 1)';
+        var descentPathColor = 'hsla(0, 50%, 50%, 0.3)';
+
+        var inputPlate = $('#input-plate')[0].getContext('2d');
+        var inputOverlay = $('#input-overlay')[0].getContext('2d');
+        var normalPlate = $('#normal-plate')[0].getContext('2d');
+        var normalOverlay = $('#normal-overlay')[0].getContext('2d');
+        var costPlate = $('#cost-plate')[0].getContext('2d');
+
+        var normalMap = pointMapper(
+            [0, normalPlate.canvas.width ], [-1.2, 1.2],
+            [0, normalPlate.canvas.height], [-1.2, 1.2]);
+        var costMap = pointMapper(
+            [0, costPlate.canvas.width ], [-2, 2],  // y-offset
+            [0, costPlate.canvas.height], [-2, 2]); // slope
+
+        var examplePoints = [[29,96],[206,125],[261,180]];
+        var points = examplePoints;
+
+        var animationTimeout = null;
+
+        $('#input-overlay').on('mousedown', function(event) {
+            $('#click-here-arrow').fadeOut('fast');
+            var plateCoords = $(this).offset();
+            var x = event.pageX - plateCoords.left;
+            var y = event.pageY - plateCoords.top;
+
+            if (points == examplePoints) {
+                points = [];
+            }
+
+            points.push([x, y]);
+            drawEverything();
+        });
+
+        $('#cost-plate').on('mousemove', function(event) {
+            var plateCoords = $(this).offset();
+            var x = event.pageX - plateCoords.left;
+            var y = event.pageY - plateCoords.top;
+            drawFunctionFromCostPlate([x, y]);
+        }).on('mouseout', function() {
+            inputOverlay.clear();
+            normalOverlay.clear();
+        });
+
+        $('#clear-button').click(function() {
+            points = [];
+            clearTimeout(animationTimeout);
+            inputPlate.clear();
+            normalPlate.clear();
+            costPlate.clear();
+        });
+
+        $('#click-here-arrow').delay(1000).fadeIn('slow');
+        drawEverything();
+    </script>
+</body>

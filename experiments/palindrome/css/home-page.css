@@ -1,0 +1,114 @@
+@font-face {
+  font-family: 'Gotham';
+  src: url('../fonts/gotham-medium.eot');
+  src: local('☺'),
+       url('../fonts/gotham-medium.woff') format('woff'),
+       url('../fonts/gotham-medium.ttf') format('truetype'),
+       url('../fonts/gotham-medium.svg#webfont') format('svg');
+}
+
+html, body {
+    padding: 0;
+    margin: 0;
+    width: 100%;
+    height: 100%;
+}
+
+html {
+    display: table;
+    background: #f2f2f2 url(../images/background.png);
+}
+
+body {
+    display: table-cell;
+    vertical-align: middle;
+    font: 16px/1.5 "Helvetica Neue", Helvetica, Arial, sans-serif;
+    color: #444;
+    text-align: center;
+    
+    background: -webkit-radial-gradient(center, ellipse cover,  rgba(0,0,0,0) 0%,rgba(0,0,0,0.4) 100%);
+}
+
+#page {
+    text-align: center;
+    display: inline-block;
+    padding: 20px;
+    
+}
+
+#flash-message {
+    font-weight: bold;
+    text-align: center;
+}
+
+#players {
+    display: none;
+}
+
+#palindrome-form {
+    display: none;
+}
+
+#palindrome-text {
+    width: 300px;
+}
+
+.rectangular-button {
+    font-family: "Helvetica Neue", Helvetica, Arial, sans-serif;
+    margin: 0;
+    position: relative;
+    display: inline;
+    color: #666;
+    text-shadow: 0px 1px 0px rgba(255,255,255,0.59);
+    background: #ececec;
+    padding: 6px 20px 6px 20px;
+    outline: none;
+    border: 1px solid #d8d8d8;
+    border-bottom: 1px solid #ccc;
+    border-radius: 3px;
+    cursor: pointer;
+    overflow: visible;
+    -webkit-box-shadow: 0px 2px 2px rgba(0,0,0,0.027), inset 0px 1px 0px rgba(255,255,255,0.69), inset 0px -1px 0px rgba(0,0,0,0.0187), inset 0px 15px 14px rgba(255,255,255,0.57);
+    -moz-box-shadow: 0px 2px 2px rgba(0,0,0,0.027), inset 0px 1px 0px rgba(255,255,255,0.69), inset 0px -1px 0px rgba(0,0,0,0.0187), inset 0px 15px 14px rgba(255,255,255,0.57);
+    -o-box-shadow: 0px 2px 2px rgba(0,0,0,0.027), inset 0px 1px 0px rgba(255,255,255,0.69), inset 0px -1px 0px rgba(0,0,0,0.0187), inset 0px 15px 14px rgba(255,255,255,0.57);
+    box-shadow: 0px 2px 2px rgba(0,0,0,0.027), inset 0px 1px 0px rgba(255,255,255,0.69), inset 0px -1px 0px rgba(0,0,0,0.0187), inset 0px 15px 14px rgba(255,255,255,0.57);
+}
+
+.rectangular-button:hover {
+    color: #888;
+    text-shadow: 0px 1px 0px rgba(255,255,255,0.69);
+    -webkit-box-shadow: 0px 2px 2px rgba(0,0,0,0.027), inset 0px 1px 0px rgba(255,255,255,0.69), inset 0px -1px 0px rgba(0,0,0,0.0187), inset 0px 15px 14px rgba(255,255,255,0.75);
+    -moz-box-shadow: 0px 2px 2px rgba(0,0,0,0.027), inset 0px 1px 0px rgba(255,255,255,0.69), inset 0px -1px 0px rgba(0,0,0,0.0187), inset 0px 15px 14px rgba(255,255,255,0.75);
+    -o-box-shadow: 0px 2px 2px rgba(0,0,0,0.027), inset 0px 1px 0px rgba(255,255,255,0.69), inset 0px -1px 0px rgba(0,0,0,0.0187), inset 0px 15px 14px rgba(255,255,255,0.75);
+    box-shadow: 0px 2px 2px rgba(0,0,0,0.027), inset 0px 1px 0px rgba(255,255,255,0.69), inset 0px -1px 0px rgba(0,0,0,0.0187), inset 0px 15px 14px rgba(255,255,255,0.75);
+}
+
+.rectangular-button:active {
+    color: #696969;
+    text-shadow: 0px 1px 0px rgba(255,255,255,0.53);
+    border: 1px solid #d2d2d2;
+    border-bottom: 1px solid #d8d8d8;
+    border-radius: 3px;
+    -webkit-box-shadow: 0px 1px 0px rgba(255,255,255,0.58), inset 0px 1px 6px rgba(0,0,0,0.07), inset 0px -15px 14px rgba(255,255,255,0.20);
+    -moz-box-shadow: 0px 1px 0px rgba(255,255,255,0.58), inset 0px 1px 6px rgba(0,0,0,0.07), inset 0px -15px 14px rgba(255,255,255,0.20);
+    -o-box-shadow: 0px 1px 0px rgba(255,255,255,0.58), inset 0px 1px 6px rgba(0,0,0,0.07), inset 0px -15px 14px rgba(255,255,255,0.20);
+    box-shadow: 0px 1px 0px rgba(255,255,255,0.58), inset 0px 1px 6px rgba(0,0,0,0.07), inset 0px -15px 14pxpx rgba(255,255,255,0.20);
+}
+
+.text-input {
+    font-family: "Helvetica Neue", Helvetica, Arial, sans-serif;
+    position: relative;
+    margin: 0;
+    padding: 5px;
+    width: 158px;
+    outline: none;
+    color: #666;
+    background: #fcfcfc;
+    border: 1px solid #d2d2d2;
+    border-bottom: 1px solid #d8d8d8;
+    border-radius: 3px;
+    -webkit-box-shadow: 0px 1px 0px rgba(255,255,255,0.58), inset 0px 0px 6px rgba(0,0,0,0.07);
+    -moz-box-shadow: 0px 1px 0px rgba(255,255,255,0.58), inset 0px 0px 6px rgba(0,0,0,0.07);
+    -o-box-shadow: 0px 1px 0px rgba(255,255,255,0.58), inset 0px 0px 6px rgba(0,0,0,0.07);
+    box-shadow: 0px 1px 0px rgba(255,255,255,0.58), inset 0px 0px 6px rgba(0,0,0,0.07);
+}

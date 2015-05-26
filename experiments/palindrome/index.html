@@ -1,0 +1,60 @@
+<!doctype html>
+<head>
+    <title>Longest palindromic substring</title>
+    <meta charset="utf-8">
+    <link rel="stylesheet" href="css/base.css">
+    <link rel="stylesheet" href="css/home-page.css">
+    <link rel="stylesheet" href="css/record-player.css">
+</head>
+<body>
+    <div id="page">
+        <div id="flash-message">Loading...</div>
+        <div id="palindrome-form">
+            <input class="text-input" id="palindrome-text" type="text" value="Lorrol Loreerol"> <input id="palindrome-play" class="rectangular-button" type="submit" value="What?">
+        </div>
+        <div id="players"></div>
+    </div>
+
+    <script src="js/jquery.js"></script>
+    <script src="js/jquery-ui.js"></script>
+    <script src="js/record-player.min.js?2"></script>
+    <script src="js/record-maker.min.js"></script>
+    <script>
+        $('#flash-message').hide();
+        $('#palindrome-play').click(playFormRecording);
+        $('#palindrome-text').keypress(function(e) {
+            if (e.which == 13) {
+                playFormRecording();
+            }
+        });
+        
+        function playFormRecording() {
+            var text = $.trim($('#palindrome-text').val());
+            if (!text) {
+                return;
+            }
+            $('#palindrome-form').hide();
+            $('#players').show();
+            var player = RecordPlayer(makeRecord(text));
+            player.appendTo('#players');
+            player.play();
+        };
+        
+        var recs = unescape(location.hash).substr(1);
+        if (recs) {
+            try {
+                recs = $.parseJSON(recs);
+                $('#players').show();
+                $.each(recs, function(_, rec) {
+                    var player = RecordPlayer(rec);
+                    player.appendTo('#players');
+                    player.play();
+                });
+            } catch(e) {
+                $('#flash-message').text('The link appears to be broken').show();
+            }
+        } else {
+            $('#palindrome-form').show();
+        }
+    </script>    
+</body>

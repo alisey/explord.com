@@ -1,0 +1,76 @@
+<!doctype html>
+<head>
+    <meta charset="utf-8">
+    <title>Longest Path (Not Really)</title>
+    <script src="scripts/jquery.js"></script>
+    <script src="scripts/coords.js"></script>
+    <script src="scripts/grid.js"></script>
+    <script src="scripts/wriggly-path.js"></script>
+    <script src="scripts/shortest-path.js"></script>
+
+    <script src="scripts/wriggly-view.js"></script>
+    <link rel="stylesheet" href="styles/wriggly-view.css">
+    <script src="scripts/wriggly-widget.js"></script>
+    
+    <style>
+        html, body {
+            width: 100%;
+            height: 100%;
+            margin: 0;
+            padding: 0;
+            border: 0;
+        }
+        
+        html {
+            display: table;
+        }
+        
+        body {
+            display: table-cell;
+            vertical-align: middle;
+            text-align: center;
+            background: #f5f5f0;
+        }
+        
+        #grid-cradle {
+            display: inline-block;
+            text-align: left;
+        }
+        
+        .wriggly-widget {
+            display: inline-block;
+            margin: 30px;
+        }
+        
+        #cradle {
+            margin: 30px;
+            display: inline-block;
+            text-align: left;
+        }
+        
+        .description {
+            font: 18px Arial;
+            color: #AEAEA5;
+            margin: 0 0 0 30px;
+            font-weight: bold;
+            text-shadow: 0px 1px white;
+            margin: 0 0 0 30px;
+        }
+    </style>
+</head>
+<body>
+    <div id="cradle"><div class="description">Click on the grid to add walls and move endpoints</div></div>
+    <script>
+    var widgets = [
+        {"width":10,"height":10,"startPoint":[0,0],"endPoint":[0,1],"walls":[]},
+        {"width":10,"height":10,"startPoint":[0,0],"endPoint":[9,0],"walls":[[2,2],[3,2],[6,2],[7,2],[2,3],[3,3],[6,3],[7,3],[2,6],[3,6],[6,6],[7,6],[2,7],[3,7],[6,7],[7,7]]},
+        {"width":10,"height":10,"startPoint":[0,1],"endPoint":[9,1],"walls":[[2,3],[3,3],[6,3],[7,3]]},
+        {"width":10,"height":10,"startPoint":[4,5],"endPoint":[6,5],"walls":[[3,3],[4,3],[5,3],[6,3],[3,4],[3,5],[3,6],[4,6],[5,6],[6,6]]}
+    ];
+    
+    $.each(widgets, function(i, settings) {
+        widget = new WrigglyWidget(settings);
+        $('#cradle').append(widget.node);
+    });
+    </script>
+</body>

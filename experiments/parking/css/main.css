@@ -1,0 +1,106 @@
+html, body {
+    margin: 0;
+    padding: 0;
+    width: 100%;
+    height: 100%;
+}
+
+html {
+    display: table;
+    background: #666;
+}
+
+body {
+    display: table-cell;
+    vertical-align: middle;
+    text-align: center;
+    background: -webkit-radial-gradient(center, ellipse cover,  rgba(0,0,0,0) 0%,rgba(0,0,0,0.8) 100%);
+}
+
+body::after {
+    display:none;
+    content: url(../images/cars.png)
+             url(../images/cars_middles.png)
+             url(../images/cars_vertical.png)
+             url(../images/cars_middles_vertical.png);
+}
+
+#page {
+    display: inline-block;
+    padding: 20px;
+}
+
+
+#puzzle-input {
+    display: inline-block;
+    vertical-align: top;
+}
+
+#puzzle-input textarea {
+    font-family: monospace;
+    border: 0;
+    width: 344px;
+    height: 344px;
+    background: white;
+    border-radius: 5px;
+    box-shadow: inset 0px 2px 6px #AAA;
+    padding: 10px;
+    box-sizing: border-box;
+    -moz-box-sizing: border-box;
+    outline: none;
+}
+
+#solve-button-container {
+    text-align: center;
+    padding-top: 5px;
+}
+
+#puzzle-animation {
+    vertical-align: top;
+    display: inline-block;
+    width: 0;
+    overflow: hidden;
+}
+
+#solve-button {
+    background-color:  #5BB75B;
+    background-image: -webkit-linear-gradient(top, #62C462, #51A351);
+    background-position: 0% 0%;
+    border-bottom-color: rgba(0, 0, 0, 0.246094);
+    border-bottom-left-radius: 4px;
+    border-bottom-right-radius: 4px;
+    border-bottom-style: solid;
+    border-bottom-width: 1px;
+    border-collapse: separate;
+    border-left-color: rgba(0, 0, 0, 0.0976563);
+    border-left-style: solid;
+    border-left-width: 1px;
+    border-right-color: rgba(0, 0, 0, 0.0976563);
+    border-right-style: solid;
+    border-right-width: 1px;
+    border-top-color: rgba(0, 0, 0, 0.0976563);
+    border-top-left-radius: 4px;
+    border-top-right-radius: 4px;
+    border-top-style: solid;
+    border-top-width: 1px;
+    box-shadow: rgba(255, 255, 255, 0.199219) 0px 1px 0px 0px inset, rgba(0, 0, 0, 0.046875) 0px 1px 2px 0px;
+    box-sizing: border-box;
+    color: white;
+    cursor: pointer;
+    display: inline-block;
+    font-family: 'Helvetica Neue', Helvetica, Arial, sans-serif;
+    font-size: 13px;
+    font-weight: bold;
+    height: 28px;
+    letter-spacing: normal;
+    line-height: 18px;
+    margin: 0;
+    padding: 4px 10px;
+    text-align: center;
+    text-decoration: none;
+    text-indent: 0px;
+    text-shadow: rgba(0, 0, 0, 0.246094) 0px -1px 0px;
+    vertical-align: middle;
+    width: 73px;
+    word-spacing: 0px;
+}

@@ -1,0 +1,57 @@
+.pal-widget {
+    position: relative;
+    padding: 25px;
+}
+
+.pal-center {
+    text-align: center;
+    float: left;
+}
+
+.pal-center-char {
+    font: 15px/30px Gotham, Arial, sans-serif;
+    text-transform: capitalize;
+    width: 30px;
+    height: 30px;
+    overflow: hidden;
+    color: #333;
+    box-shadow: inset 0 1px 2px #666;
+    border-radius: 5px;
+    margin-right: 3px;
+    background: #fff;
+    text-shadow: 1px 1px 1px rgba(0, 0, 0, 0.3);
+    outline: 1px solid #ddd\9;
+}
+
+.pal-center-indicator {
+    position: absolute;
+    display: none;
+    font: 14px "Lucida Grande", "Lucida Sans Unicode", sans-serif;
+    margin-top: -1px;
+    color: #666;
+}
+
+.pal-expander {
+    position: absolute;
+    display: none;
+    opacity: 0.3;
+    border-radius: 5px;
+    box-shadow: 0px 2px 3px #999;
+    background: #207cca;
+    
+    background: -moz-linear-gradient(top,  #1e5799 0%, #2989d8 50%, #207cca 51%, #7db9e8 100%);
+    background: -webkit-linear-gradient(top,  #1e5799 0%,#2989d8 50%,#207cca 51%,#7db9e8 100%);
+    background: -o-linear-gradient(top,  #1e5799 0%,#2989d8 50%,#207cca 51%,#7db9e8 100%);
+    background: -ms-linear-gradient(top,  #1e5799 0%,#2989d8 50%,#207cca 51%,#7db9e8 100%);
+    background: linear-gradient(top,  #1e5799 0%,#2989d8 50%,#207cca 51%,#7db9e8 100%);
+    filter: alpha(opacity=30);
+}
+
+.pal-longest-match {
+    position: absolute;
+    display: none;
+    height: 3px;
+    margin-top: 2px;
+    border: 1px solid #999;
+    border-top: none;
+}

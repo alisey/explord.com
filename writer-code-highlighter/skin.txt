@@ -1,0 +1,97 @@
+/* RESET DA STYLES */
+
+.gr-body {
+    background: #FFFFFF;
+    font: 13px/1.4 Verdana;
+    border-bottom: 1px solid #A6B2A6;
+}
+i.gb {
+    display: none;
+}
+a {
+    text-decoration: none;
+    color: #2f779e;
+}
+a:hover {
+    text-decoration: underline;
+}
+
+/* CODE BOXES */
+
+code, span.code, div.code {
+    color: black;
+    background: #F2F6FF;
+    text-shadow: 0 1px white;
+    font-family: Consolas, Monaco, 'Andale Mono', monospace;
+    text-align: left;
+    white-space: pre;
+    word-spacing: normal;
+    padding: .1em;
+    border-radius: .3em;
+}
+
+div.code {
+    display: block;
+    padding: 1em;
+    margin: .5em 0;
+    overflow: auto;
+}
+
+/* CODE TOKENS */
+
+.token.comment,
+.token.prolog,
+.token.doctype,
+.token.cdata {
+    color: slategray;
+}
+
+.token.punctuation {
+    color: #999;
+}
+
+.namespace {
+    opacity: .7;
+}
+
+.token.property,
+.token.tag,
+.token.boolean,
+.token.number {
+    color: #905;
+}
+
+.token.selector,
+.token.attr-name,
+.token.string {
+    color: #690;
+}
+
+.token.operator,
+.token.entity,
+.token.url,
+.language-css .token.string,
+.style .token.string {
+    color: #a67f59;
+    background: rgba(255,255,255,.5);
+}
+
+.token.atrule,
+.token.attr-value,
+.token.keyword {
+    color: #07a;
+}
+
+
+.token.regex,
+.token.important {
+    color: #e90;
+}
+
+.token.important {
+    font-weight: bold;
+}
+
+.token.entity {
+    cursor: help;
+}

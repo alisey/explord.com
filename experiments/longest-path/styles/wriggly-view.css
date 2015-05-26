@@ -1,0 +1,55 @@
+.wriggly-grid {
+    position: relative;
+    padding: 1px;
+    background: #f0f0e8;
+}
+
+.wriggly-grid canvas {
+    position: absolute;
+    left: 1px;
+    top: 1px;
+}
+
+.wriggly-grid .cells {
+    position: absolute;
+    left: 1px;
+    top: 1px;
+}
+
+.wriggly-grid .cells div {
+    float: left;
+    border: 1px solid  rgba(128, 128, 128, 0.1);
+    width: 29px;
+    height: 29px;
+    margin: -1px 0 0 -1px;
+}
+
+.wriggly-grid .cells div:hover {
+    background-color: rgba(128, 128, 128, 0.2);
+}
+
+.wriggly-grid .wall {
+    background: #333 url(../images/wall.png);
+}
+
+.wriggly-grid .wall:hover {
+    opacity: 0.9;
+}
+
+.wriggly-grid .start-point {
+    background: url(../images/point-a.png) no-repeat center center;
+    cursor: move;
+}
+
+.wriggly-grid .end-point {
+    background: url(../images/point-b.png) no-repeat center center;
+    cursor: move;
+}
+
+.wriggly-grid .texture {
+    background: url(../images/texture.png);
+    position: absolute;
+    left: 0px;
+    top: 0px;
+    pointer-events: none;
+}

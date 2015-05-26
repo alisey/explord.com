@@ -1,0 +1,76 @@
+.car {
+    position: absolute;
+}
+
+.car.horiz.odd {
+    -webkit-transform: scaleX(-1);
+    -moz-transform: scaleX(-1);
+    transform: scaleX(-1);
+}
+
+.car.vert.odd {
+    -webkit-transform: scaleY(-1);
+    -moz-transform: scaleY(-1);
+    transform: scaleY(-1);
+}
+
+.car.horiz {
+    height: 39px;
+    margin-top: 2px;
+}
+
+.car.horiz .front {
+    position: absolute;
+    right: 0;
+    width: 80px;
+    height: 39px;
+    background: url(../images/cars.png) no-repeat 0 0;
+}
+
+.car.horiz .middle {
+    position: absolute;
+    left: 30px;
+    right: 50px;
+    height: 39px;
+    background: url(../images/cars_middles.png) repeat-x 0 0;
+}
+
+.car.horiz .back {
+    position: absolute;
+    left: 0;
+    width: 30px;
+    height: 39px;
+    background: url(../images/cars.png) no-repeat 0 0;
+}
+
+
+.car.vert {
+    width: 39px;
+    margin-left: 2px;
+}
+
+.car.vert .front {
+    position: absolute;
+    top: 0;
+    width: 39px;
+    height: 50px;
+    background: url(../images/cars_vertical.png) no-repeat 0 0;
+    z-index: 1;
+}
+
+.car.vert .middle {
+    position: absolute;
+    top: 50px;
+    bottom: 30px;
+    width: 39px;
+    background: url(../images/cars_middles_vertical.png) repeat-y 0 0;
+    z-index: 2;
+}
+
+.car.vert .back {
+    position: absolute;
+    bottom: 0;
+    height: 80px;
+    width: 39px;
+    background: url(../images/cars_vertical.png) no-repeat 0 0;
+}

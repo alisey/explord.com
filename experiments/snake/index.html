@@ -1,0 +1,171 @@
+<!doctype html>
+<head>
+    <meta charset="utf-8">
+    <title>Snake</title>
+    <!--script src="game.js"></script>
+    <script src="brain.js"></script>
+    <script src="render.js"></script -->
+    <style>
+        html, body {
+            width: 100%;
+            height: 100%;
+            margin: 0;
+            padding: 0;
+            overflow: hidden;
+        }
+        
+        html {
+            display: table;
+        }
+        
+        body {
+            background: #203f31;
+            background: -webkit-radial-gradient(top, #2D5944 0%, #162b21 100%);
+            background: radial-gradient(ellipse at top, #2D5944 0%, #162b21 100%);
+            display: table-cell;
+            vertical-align: middle;
+            text-align: center;
+        }
+        
+        #grass {
+            display: inline-block;
+            vertical-align: middle;
+            position: relative;
+            text-align: left;
+            background: #88B327 url(grass.jpg) no-repeat center center;
+            width: 256px;
+            height: 256px;
+            border: 1px solid rgba(0,0,0,0.3);
+            border-radius: 10px;
+            box-shadow: 0px 6px 0 rgba(0,0,0,0.3), 0px 7px 10px rgba(0,0,0,0.4);
+        }
+        
+        #world-cradle {
+            margin: 8px;
+        }
+        
+        @-webkit-keyframes bumpin {
+            0%   { -webkit-transform: scale(0.3); }
+            100% { -webkit-transform: scale(1); }
+        }
+        
+        @keyframes bumpin {
+            0%   { transform: scale(0.3); }
+            100% { transform: scale(1); }
+        }
+        
+        .apple {
+            /*
+            -webkit-animation: bumpin 0.6s;
+                    animation: bumpin 0.6s;
+            */
+        }
+        
+        .force-field div {
+            float: left;
+            -webkit-transition: opacity 0.2s;
+            transition: opacity 0.2s;
+        }
+        
+        #mad-skills {
+            font-size: 12px;
+            display: none;
+        }
+        
+        .rectangular-button {
+            font-family: "Helvetica Neue", Helvetica, Arial, sans-serif;
+            background: rgba(0, 0, 0, 0.3);
+            color: rgba(255, 255, 200, 0.8);
+            padding: 6px 20px 6px 20px;
+            border-radius: 3px;
+            cursor: pointer;
+            box-shadow: 0 2px 2px #000;
+            text-shadow: 0 -1px 1px #000;
+            -webkit-user-select: none;
+            -moz-user-select: none;
+            user-select: none;
+        }
+
+        .rectangular-button:hover {
+            background: rgba(0, 0, 0, 0.5);
+        }
+
+        .rectangular-button:active {
+            background: #000;
+        }
+    </style>
+</head>
+<body>
+    <div id="grass">
+        <div id="world-cradle"></div>
+        <div style="text-align: center; padding-top: 20px;">
+            <span id="mad-skills" class="rectangular-button"></span>
+        </div>
+    </div>
+    
+    <script src="all.js"></script>
+    <script>
+    function restart() {
+        alive = true;
+        if (window.view) {
+            view.destroy();
+        }
+        
+        if (window.forceField) {
+            forceField.destroy();
+        }
+        
+        world = new World(16);
+        brain = new Brain(world);
+        world.placeObjects();
+        
+        view = new SnakeWorldView({
+            container: document.getElementById('world-cradle'),
+            width: 16,
+            height: 16,
+            snake: world.snakeAsDirections(),
+            apple: world.appleCoords(),
+            onStepCompletion: function(next) {
+                // draw apple at its old coordinates, because eating it takes 1 step
+                view.placeApple(world.appleCoords());
+                var move = brain.suggestMove(function(move) {
+                    if (move) {
+                        world.move(move);
+                        next(world.direction(move), world.growth);
+                    } else {
+                        alive = false;
+                        speedButton.innerHTML = 'Restart';
+                    }
+                });
+            }
+        });
+        
+        forceField = new ForceField(document.getElementById('world-cradle'), 15, 16, 16);
+        setSpeedMode(getSpeedMode());
+    }
+    
+    function setSpeedMode(on) {
+        location.hash = on ? 'hyperspeed' : '';
+        speedButton.innerHTML = on ? 'Slow down' : 'Activate mad skills';
+        forceField.toggle(!on);
+        view.fastmo(on);
+    }
+    
+    function getSpeedMode() {
+        return /hyperspeed/.test(location.hash);
+    }
+    
+    function toggleSpeedMode() {
+        setSpeedMode(!getSpeedMode());
+    }
+    
+    var speedButton = document.getElementById('mad-skills');
+    speedButton.onclick = function() {
+        alive ? toggleSpeedMode() : restart();
+    }
+    
+    restart();
+    
+    speedButton.style.display = 'inline';
+    </script>
+</body>

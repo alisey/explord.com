@@ -1,0 +1,72 @@
+<!doctype html>
+<head>
+    <meta charset="utf-8">
+    <title>Camera Tracks</title>
+    <style>
+        html, body {
+            width: 100%;
+            height: 100%;
+            margin: 0;
+            padding: 0;
+            overflow: hidden;
+            background: #fafaf8;
+        }
+        
+        #paper {
+            position: absolute;
+        }
+    </style>
+    
+    <script src="tracks.js"></script>
+</head>
+</body>
+    <canvas id="paper"></canvas>
+
+    <script>
+        function average(points) {
+            return smoothPoints(points, 20);
+        }
+        
+        function easing(points) {
+            points = points.slice();
+            points = smoothPoints(points, 20);
+            var x = points[0].x;
+            var y = points[0].y;
+            
+            for (var i = 0; i < points.length; i++) {
+                x += (points[i].x - x) * 0.1;
+                y += (points[i].y - y) * 0.1;
+                points[i] = {x: x, y: y};
+            }
+            return points;
+        }
+        
+        function catmull(points) {
+            points = smoothPoints(points, 20);
+            points = everyNthPoint(points, 20);
+            points = catmullRomInterpolate(points, 20);
+            return points;
+        }
+        
+        paper        = document.getElementById('paper');
+        ctx          = paper.getContext('2d');
+        paper.width  = window.innerWidth;
+        paper.height = window.innerHeight;
+        points       = fitPointsToCanvas(paper, dragonPoints(22, 10000), 50);
+        
+        ctx.globalAlpha = 0.8;
+        
+        if (true) {
+            trace(paper, points,          '#d8d8d8');
+            trace(paper, catmull(points), '#00a7ef');
+            trace(paper, easing(points),  '#ec0082');
+            // trace(paper, average(points), '#777766');
+        } else {
+            traceVersus(paper, catmull(points), easing(points));
+        }
+        
+        document.body.onclick = function() {
+            flyThroughPoints(paper, easing(points), 30);
+        }
+    </script>
+</body>

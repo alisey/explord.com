@@ -1,0 +1,222 @@
+<!doctype html>
+<head>
+    <meta charset="utf-8">
+    <title>Pythagoras Tree</title>
+    <style>
+        html, body, canvas {
+            display: block;
+            width: 100%;
+            height: 100%;
+            margin: 0;
+            padding: 0;
+            background: #4090a0;
+        }
+
+        .description {
+            position: fixed;
+            width: 100%;
+            top: 25%;
+            text-align: center;
+            font: 4vmin sans-serif;
+            color: #ffe0da;
+            opacity: 0.3;
+        }
+    </style>
+</head>
+<body>
+    <div class="description">Click to morph</div>
+    <canvas></canvas>
+    <script>
+        "use strict";
+
+        function lerp(start, end, t) {
+            return (1 - t) * start + t * end;
+        }
+
+        function easeInOut(t) {
+            var a = 2;
+            return Math.pow(t, a) / (Math.pow(t, a) + Math.pow(1 - t, a));
+        }
+
+        function easeOutExp(t) {
+            return (t == 1) ? 1 : 1 - Math.exp(-5 * t);
+        }
+
+        function random(a, b) {
+            return lerp(a, b, Math.random());
+        }
+
+        function clearContext(c) {
+            c.save();
+            c.setTransform(1, 0, 0, 1, 0, 0);
+            c.clearRect(0, 0, c.canvas.width, c.canvas.height);
+            c.restore();
+        }
+
+        function Phasor(args) {
+            this.phase = args.phase;
+            this.amplitude = args.amplitude;
+            this.velocity = args.velocity;
+            this.x0 = args.x0;
+            this.y0 = args.y0;
+        }
+
+        Phasor.prototype.getXY = function(t) {
+            return [
+                this.x0 + this.amplitude * Math.cos(this.phase + t * this.velocity),
+                this.y0 + this.amplitude * Math.sin(this.phase + t * this.velocity)
+            ];
+        };
+
+        function PhasorMorph(source) {
+            this.source = source;
+            this.target = source;
+            this.now = 0;
+            this.alpha = 0;
+            this.start = 0;
+            this.duration = 0;
+        }
+
+        PhasorMorph.prototype.update = function(now) {
+            this.now = now;
+            this.alpha = Math.min((this.now - this.start) / this.duration, 1);
+            if (this.alpha >= 1) {
+                this.source = this.target;
+            }
+        };
+
+        PhasorMorph.prototype.startMorphing = function(target, duration) {
+            this.source = this.target;
+            this.target = target;
+            this.start = this.now;
+            this.alpha = 0;
+            this.duration = duration;
+        };
+
+        PhasorMorph.prototype.getXY = function(segmentIndex) {
+            if (this.source == this.target) {
+                return this.source[segmentIndex].getXY(this.now);
+            } else {
+                var alpha = easeInOut(this.alpha);
+                var src = this.source[segmentIndex].getXY(this.now);
+                var dst = this.target[segmentIndex].getXY(this.now);
+                return [lerp(src[0], dst[0], alpha),
+                        lerp(src[1], dst[1], alpha)];
+            }
+        };
+
+        function makePhasors(treeDepth, phasorOptionsFn) {
+            var phasors = [];
+            function recurse(depth) {
+                if (depth <= treeDepth) {
+                    // Pre-order
+                    phasors.push(new Phasor(phasorOptionsFn(depth)));
+                    recurse(depth + 1);
+                    recurse(depth + 1);
+                }
+            }
+            recurse(0);
+            return phasors;
+        }
+
+        function drawTree(context, treeDepth, segmentDisplacmentFn) {
+            var segmentIndex = 0;
+
+            function drawSegment(x, y) {
+                context.beginPath();
+                context.moveTo(0, 0);
+                context.lineTo(0, 1);
+                context.lineTo(x, 1 + y);
+                context.lineTo(1, 1);
+                context.lineTo(1, 0);
+                context.lineTo(0, 0);
+                context.fill();
+            }
+
+            function recurse(depth) {
+                if (depth > treeDepth) {
+                    return;
+                }
+                var xy = segmentDisplacmentFn(segmentIndex)
+                var x = xy[0];
+                var y = xy[1];
+                segmentIndex += 1;
+                drawSegment(x, y);
+                context.save();
+                context.transform(x, y, -y, x, 0, 1);
+                recurse(depth + 1);
+                context.restore();
+                context.save();
+                context.transform(1 - x, -y, y, 1 - x, x, 1 + y);
+                recurse(depth + 1);
+                context.restore();
+            }
+
+            recurse(0);
+        }
+
+        var treeDepth = 9;
+        var treeScale = 0.2;
+        var morphDuration = 1500;
+        var morphInterval = 5000;
+        var phasorA = function(depth) {
+            return {
+                phase: random(-1, 1) * Math.PI,
+                amplitude: 0.02 * (depth + 1),
+                velocity: 0.002 * random(-1, 1),
+                x0: 0.5,
+                y0: 0.33,
+            };
+        };
+        var phasorB = function(depth) {
+            return {
+                phase: random(-1, 1) * Math.PI,
+                amplitude: 0.01 * (depth + 1),
+                velocity: 0.002 * random(-2, 2),
+                x0: random(0.2, 0.8),
+                y0: 0.33,
+            };
+        };
+        var patterns = [phasorA, phasorB, phasorB, phasorB];
+
+        var canvas = document.querySelector('canvas');
+        var context = canvas.getContext('2d');
+        var patternIndex = 0;
+        var morphTimeout;
+        var morph = new PhasorMorph(makePhasors(treeDepth, nextPattern()));
+        window.addEventListener('resize', fitToScreen);
+        window.addEventListener('click', startMorphing);
+        fitToScreen();
+        animate();
+
+        function fitToScreen() {
+            var width = canvas.width = window.innerWidth;
+            var height = canvas.height = window.innerHeight;
+            var base = treeScale * Math.min(width, height);
+            context.setTransform(base, 0, 0, -base, (width - base) / 2, height);
+            context.globalAlpha = 0.8;
+            context.fillStyle = '#ffe0da';
+        }
+
+        function startMorphing() {
+            clearTimeout(morphTimeout);
+            morphTimeout = setTimeout(startMorphing, morphInterval);
+            document.querySelector('.description').style.display = 'none';
+            var newPhasors = makePhasors(treeDepth, nextPattern());
+            morph.startMorphing(newPhasors, morphDuration);
+        }
+
+        function nextPattern() {
+            return patterns[patternIndex++ % patterns.length];
+        }
+
+        function animate(timestamp) {
+            requestAnimationFrame(animate);
+            clearContext(context);
+            morph.update(timestamp);
+            drawTree(context, treeDepth, function(segmentIndex) {
+                return morph.getXY(segmentIndex);
+            });
+        }
+    </script>
+</body>
