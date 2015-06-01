@@ -106,7 +106,7 @@
         );
 
         function emojify(node) {
-            node.innerHTML = node.innerHTML.replace(/:(\w+):/g, function(match, img) {
+            node.innerHTML = node.innerHTML.replace(/:([\w-]+):/g, function(match, img) {
                 return '<img class="emoji" width="21" height="21" src="images/emoji/' + img + '.png" alt="' + match + '" title="' + match + '">';
             });
         }
