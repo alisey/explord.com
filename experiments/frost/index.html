@@ -1,0 +1,144 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8">
+    <title>❄ ❄ ❄</title>
+    <style>
+        html {
+            height: 100%;
+        }
+
+        body {
+          margin: 0;
+          height: 100%;
+          background: #68AEB5;
+        }
+
+        body::after {
+            z-index: -1;
+            content: "";
+            display: block;
+            position: absolute;
+            left: 0;
+            top: 0;
+            width: 100%;
+            height: 100%;
+            opacity: 0.2;
+            background-size: cover;
+            background-image: url(blur.png);
+        }
+
+        canvas {
+          display: block;
+          width: 100%;
+          height: 100%;
+        }
+
+        .clickme {
+            position: absolute;
+            left: 50%;
+            top: 50%;
+            font: 4vw sans-serif;
+            -webkit-transform: translate(-50%, -50%);
+            transform: translate(-50%, -50%);
+            color: #FFFFFF;
+            opacity: 0.2;
+            pointer-events: none;
+            transition: opacity 0.3s;
+        }
+    </style>
+    <script src="kdTree.js"></script>
+</head>
+<body>
+    <canvas></canvas>
+    <div class="clickme">Click anywhere</div>
+    <script>
+
+
+        function euclideanDistance(a, b) {
+            var dx = b.x - a.x;
+            var dy = b.y - a.y;
+            return Math.sqrt(dx*dx + dy*dy);
+        };
+
+        function rand(a, b) {
+            return a + (b - a) * Math.random();
+        }
+
+        // 1. Pre-check length vs post-check vs don't check.
+        // 2. The order of picking from frontier: first vs. last vs. random
+        function tree(x, y, length, angle, depth) {
+            if (isNaN(x) || isNaN(y) || isNaN(length) || isNaN(angle)) {
+                throw("Error!");
+            }
+            // var NEAR = 5; length += 0.3 * length * rand(-0.9, 1);
+            var NEAR = 3; length += 0.3 * length * rand(-0.5, 1); if (length > 9) length = 9;
+            // var NEAR = 5; angle += 0.1 * rand(-Math.PI, Math.PI); length = rand(5, 6);
+            var dx = length * Math.cos(angle);
+            var dy = length * Math.sin(angle);
+            var nearest = kd.nearest({x: x+dx, y: y+dy}, 1, NEAR);
+            if (nearest.length) {
+                return;
+            }
+            kd.insert({x: x+dx, y: y+dy});
+            if (depth >= minDepth) {
+                context.moveTo(x, y);
+                context.lineTo(x + dx, y + dy);
+            }
+            if (length > 5) {
+                if (true) {
+                    frontier.push([x + dx, y + dy, 0.85 * length, angle - 0.35, depth + 1]);
+                    frontier.push([x + dx, y + dy, 0.85 * length, angle + 0.35, depth + 1]);
+                } else {
+                    frontier.push([x + dx, y + dy, 0.85 * length, angle + 0.35, depth + 1]);
+                    frontier.push([x + dx, y + dy, 0.85 * length, angle - 0.35, depth + 1]);
+                }
+            }
+        }
+
+        function handleClick(x, y) {
+            document.querySelector('.clickme').style.opacity = 0;
+            iteration = 0;
+            frontier = [[x, y, initialLength, Math.random() * 2 * Math.PI, 0]];
+        }
+
+        var canvas = document.querySelector('canvas');
+        var context = canvas.getContext('2d');
+        var width = canvas.width = canvas.clientWidth;
+        var height = canvas.height = canvas.clientHeight;
+
+        var maxIterations = 10000;
+        var minDepth = 0;
+        var initialLength = 20;
+        var batchSize = 100;
+        var iteration = 0;
+        var frontier = [];
+        var kd = new kdTree([], euclideanDistance, ['x', 'y']);
+        var draw = function() {
+            requestAnimationFrame(draw);
+            context.strokeStyle = '#FFFFFF';
+            context.lineWidth = rand(0.5, 1.5);
+            if (frontier.length && iteration < maxIterations) {
+                context.beginPath();
+                for (var i = 0; i < batchSize && frontier.length; i++) {
+                    var item = frontier.shift();
+                    tree.apply(null, item);
+                    iteration++;
+                }
+                context.stroke();
+            }
+        };
+
+        document.body.addEventListener('click', function(event) {
+            handleClick(event.pageX, event.pageY);
+        }, false);
+
+        document.body.addEventListener('touchstart', function(event) {
+            var touch = event.changedTouches[0];
+            handleClick(touch.pageX, touch.pageY);
+        }, false);
+
+        requestAnimationFrame(draw);
+    </script>
+</body>
+</html>
